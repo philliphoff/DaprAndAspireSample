@@ -1,3 +1,5 @@
+using DaprAndAspireSample.Actors;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
@@ -6,6 +8,12 @@ builder.AddServiceDefaults();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddActors(
+    options =>
+    {
+        options.Actors.RegisterActor<TestActor>();
+    });
 
 var app = builder.Build();
 
@@ -16,12 +24,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
+
+app.UseRouting();
+
+app.MapActorsHandlers();
 
 app.MapGet("/weatherforecast", () =>
     {
